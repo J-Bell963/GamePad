@@ -5,14 +5,19 @@
 #include "screen.h"
 #include "frames.h"
 #include "tile.h"
+#include "controls.h"
+#include "hero.h"
 
 void setup() {
   Serial.begin(9600);
   initScreen();
+  initControls();
+  initHero();
 }
 
 void loop() {
   checkFrame();
-  drawLevel(5);
+  getControls();
+  drawHero();
  
 }

@@ -3,24 +3,34 @@
 
 float heroX;
 float heroY;
+int heroW = 32;
+int heroH = 32;
 float heroSpeed;
 boolean isDrawn;
 int heroDir;
 int heroFrame;
+int curTileX;
+int curTileY;
+int curTile;
 Metro heroFrameTimer = Metro(250); //timer creation
 
 
-void initHero() { // intially sets my hero at the center of the screen 
+void initHero() { // intially sets my hero at the center of the screen
   heroX = screenW / 2 ;
   heroY = screenH / 2;
-  heroSpeed = .5;
+  heroSpeed = 0.75;
   isDrawn = false;
   heroFrame = 0;
 }
 
-void drawHero() { 
-  heroX = heroX + (joystickBuffer[1] * heroSpeed);
-  heroY = heroY + (joystickBuffer[0] * heroSpeed);
+void drawHero() {
+  float nextX = heroX + (float(joystickBuffer[1]) * heroSpeed);
+  float nextY = heroY + (float(joystickBuffer[0]) * heroSpeed);
+
+  if (checkMove(curMode, nextX, nextY, heroW, heroH) == true) {
+    heroX = nextX;
+    heroY = nextY;
+  }
 
   if (joystickBuffer[1] > 0) { // checks if my hero is moving to the right
     heroDir = 0;
@@ -34,6 +44,8 @@ void drawHero() {
   if (joystickBuffer[1] == 0 && heroDir == 1) { // sets left facing frame
     heroFrame = 6;
   }
+
+
 
   if (joystickBuffer[1] == 1 && heroDir == 0) { // cycles through my frames when my hero is moving to the right
     if (heroFrameTimer.check()) {
@@ -58,29 +70,12 @@ void drawHero() {
     heroFrame = 8;
   }
 
-  if (heroX + 32 > 318 ) { // side wall bounding
-    heroX = 318 - 32;
-  }
-  if (heroX < 2) {
-    heroX = 2;
-  }
-  if (heroY + 32 > 238) { // top and bottom wall bounding
-    heroY = 238 - 32;
-  }
-  if (heroY  < 2) {
-    heroY = 2 ;
-  }
-
-  drawLevel(0);
-
-  if (isDrawn == false) {
-    tft.updateScreen();
-    isDrawn = true;
-  }
-
-  tft.setClipRect(heroX - 5, heroY - 5, 37, 37);
-  tft.drawRGBBitmap(heroX, heroY, whit_PIX[heroFrame], whit_MASK[heroFrame], 32, 32);
-  tft.updateScreen();
+  tft.setClipRect(heroX - 1, heroY - 1, 33, 33);
+  tft.drawRGBBitmap(heroX, heroY, whit_PIX[heroFrame], whit_MASK[heroFrame], heroW, heroH);
 
 
+  curTileX = heroX / tileSize;
+  curTileY = heroY / tileSize;
+  curTile = curTileX + (curTileY * tileW);
+  
 }

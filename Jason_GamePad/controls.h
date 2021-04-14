@@ -51,15 +51,15 @@ void getControls() {
   else if (thisJoyY > 561) {
     joystickBuffer[1] = -1;
   }
-  Serial.print(buttonBuffer[0]);
-  Serial.print(", ");
-  Serial.print(buttonBuffer[1]);
-  Serial.print(", ");
-  Serial.print(buttonBuffer[2]);
-  Serial.print(", ");
-  Serial.print(buttonBuffer[3]);
-  Serial.print(", ");
-  Serial.print(joystickBuffer[1]);
-  Serial.print(", ");
-  Serial.println(joystickBuffer[0]);
+//  Serial.print(buttonBuffer[0]);
+//  Serial.print(", ");
+//  Serial.print(buttonBuffer[1]);
+//  Serial.print(", ");
+//  Serial.print(buttonBuffer[2]);
+//  Serial.print(", ");
+//  Serial.print(buttonBuffer[3]);
+//  Serial.print(", ");
+//  Serial.print(joystickBuffer[1]);
+//  Serial.print(", ");
+//  Serial.println(joystickBuffer[0]);
 }

@@ -9,6 +9,7 @@ float heroSpeed;
 boolean isDrawn;
 int heroDir;
 int heroFrame;
+int heroHealth = 3;
 int curTileX;
 int curTileY;
 int curTile;
@@ -23,11 +24,11 @@ void initHero() { // intially sets my hero at the center of the screen
   heroFrame = 0;
 }
 
-void drawHero() {
+void drawHero() { // draws my hero
   float nextX = heroX + (float(joystickBuffer[1]) * heroSpeed);
   float nextY = heroY + (float(joystickBuffer[0]) * heroSpeed);
 
-  if (checkMove(curMode, nextX, nextY, heroW, heroH) == true) {
+  if (checkMove(curMode, nextX, nextY, heroW, heroH) == true) {// checks to see if the next move is in the bounds of the game
     heroX = nextX;
     heroY = nextY;
   }
@@ -65,17 +66,25 @@ void drawHero() {
 
   if (buttonBuffer[1] == 1) { // right attack
     heroFrame = 4;
+    if (heroFrameTimer.check()) {
+      heroFrame = 1;
+    }
   }
   if (buttonBuffer[3] == 1) { // left attack
     heroFrame = 8;
+    if (heroFrameTimer.check()) {
+      heroFrame = 5;
+    }
   }
 
   tft.setClipRect(heroX - 1, heroY - 1, 33, 33);
   tft.drawRGBBitmap(heroX, heroY, whit_PIX[heroFrame], whit_MASK[heroFrame], heroW, heroH);
+  tft.updateScreen( );
+
 
 
   curTileX = heroX / tileSize;
   curTileY = heroY / tileSize;
   curTile = curTileX + (curTileY * tileW);
-  
+
 }

@@ -1,13 +1,9 @@
-//#include <Adafruit_GFX.h>
-//#include <Adafruit_GrayOLED.h>
-//#include <Adafruit_SPITFT.h>
-//#include <Adafruit_SPITFT_Macros.h>
 #include <gfxfont.h>
 
 #include "Graphic_PIX.h"
 #include "Graphic_MASK.h"
 
-
+boolean initDeadScreen;
 boolean initIntro;
 boolean initLvl1;
 boolean initLvl2;
@@ -17,6 +13,7 @@ boolean initLvl5;
 boolean initLvl6;
 
 void initMode() {
+  initDeadScreen = false;
   initIntro = false;
   initLvl1 = false;
   initLvl2 = false;
@@ -26,8 +23,23 @@ void initMode() {
   initLvl6 = false;
 
 }
+void deadScreen() {
+  if (initDeadScreen == false) {
+    tft.setClipRect(0, 0, screenW, screenH);
+    tft.setCursor(90, 100);
+    tft.setTextColor(ILI9341_RED);
+    tft.setTextSize(3);
+    tft.print("YOU DIED");
+  }
+  heroHealth = 3;
 
-void introScreen() {
+  if (buttonBuffer[2] == 1) {
+    curMode = -1;
+
+  }
+}
+
+void introScreen() { // my intro screen
   if (initIntro == false) {
     tft.setClipRect(0, 0, screenW, screenH);
     tft.drawRGBBitmap(0, 0, Graphic_PIX[0], 320, 206);
@@ -50,28 +62,30 @@ void introScreen() {
     tft.updateScreen();
     initIntro = true;
   }
+  if (buttonBuffer[0] == 1) {
+    curMode = 0;
 
-  for (int i = 0; i < 4; i++) {
-    if (buttonBuffer[i]) {
-      curMode = 0;
-    }
   }
 }
 
 
-void firstLevel() {
+void firstLevel() {// draws my courtyard level
 
   if (initLvl1 == false) {
     tft.setClipRect(0, 0, screenW, screenH);
     drawLevel(0);
     enemyX = 100;
     enemyY = 100;
+    enemyHealth = 2;
+    enemyStatus = true;
     tft.updateScreen();
     initLvl1 = true;
   }
   drawLevel(0);
-  //drawEnemy();
+  fight();
+  drawEnemy();
   drawHero();
+
   if (interaction[curMode][curTile] == 0x02 && buttons[0].rose()) {
     curMode = 1;
     initLvl1 = false;
@@ -79,7 +93,7 @@ void firstLevel() {
     heroY = 40;
   }
 }
-void secondLevel() {
+void secondLevel() { // draws my atruim level
 
   if (initLvl2 == false) {
     tft.setClipRect(0, 0, screenW, screenH);
@@ -89,6 +103,7 @@ void secondLevel() {
   }
   drawLevel(1);
   drawHero();
+
   if (interaction[curMode][curTile] == 0x03 && buttons[0].rose()) {
     curMode = 2;
     initLvl2 = false;
@@ -114,17 +129,24 @@ void secondLevel() {
     heroY = 200;
   }
 }
-void thirdLevel() {
+void thirdLevel() { // draws my left lab level
 
   if (initLvl3 == false) {
     tft.setClipRect(0, 0, screenW, screenH);
     drawLevel(2);
+    enemyX = 100;
+    enemyY = 100;
+    enemyHealth = 2;
+    enemyStatus = true;
     tft.updateScreen();
     initLvl3 = true;
   }
+
   drawLevel(2);
+  fight();
   drawEnemy();
   drawHero();
+
   if (interaction[curMode][curTile] == 0x02 && buttons[0].rose()) {
     curMode = 1;
     initLvl3 = false;
@@ -132,7 +154,7 @@ void thirdLevel() {
     heroY = 110;
   }
 }
-void fourthLevel() {
+void fourthLevel() { // draws my experiment room level
 
   if (initLvl4 == false) {
     tft.setClipRect(0, 0, screenW, screenH);
@@ -140,6 +162,7 @@ void fourthLevel() {
     tft.updateScreen();
     initLvl4 = true;
   }
+
   drawLevel(3);
   drawHero();
   if (interaction[curMode][curTile] == 0x02 && buttons[0].rose()) {
@@ -149,18 +172,24 @@ void fourthLevel() {
     heroY = 200;
   }
 }
-void fifthLevel() {
+void fifthLevel() { // draws my rundown hallway level
 
   if (initLvl5 == false) {
     tft.setClipRect(0, 0, screenW, screenH);
     drawLevel(4);
+    enemyX = 100;
+    enemyY = 100;
+    enemyHealth = 2;
+    enemyStatus = true;
     tft.updateScreen();
     initLvl5 = true;
   }
-  drawLevel(4);
-  drawEnemy();
 
+  drawLevel(4);
+  fight();
+  drawEnemy();
   drawHero();
+
   if (interaction[curMode][curTile] == 0x02 && buttons[0].rose()) {
     curMode = 1;
     initLvl5 = false;
@@ -174,7 +203,7 @@ void fifthLevel() {
     heroY = 110;
   }
 }
-void sixthLevel() {
+void sixthLevel() { // draws my DR.Z's lab level
 
   if (initLvl6 == false) {
     tft.setClipRect(0, 0, screenW, screenH);
@@ -184,6 +213,7 @@ void sixthLevel() {
   }
   drawLevel(5);
   drawHero();
+
   if (interaction[curMode][curTile] == 0x05 && buttons[0].rose()) {
     curMode = 4;
     initLvl6 = false;
@@ -192,8 +222,9 @@ void sixthLevel() {
   }
 }
 
-void runMode() {
-  switch (curMode) {
+void runMode() { // finite state machine that controls my levels
+  switch (curMode) { // switch case of my levels
+    case -2: deadScreen(); break;
     case -1: introScreen(); break;
     case 0: firstLevel(); break;
     case 1: secondLevel(); break;

@@ -10,14 +10,14 @@ int joystickBuffer[2] {0, 0};
 int thisJoyX;
 int thisJoyY;
 
-void initControls() {
+void initControls() { // sets up buttons 
   for (int i = 0; i < 4; i++) {
     buttons[i].attach(buttonPins[i], INPUT_PULLUP);
     buttons[i].interval(buttonBounce);
   }
 }
 
-void getControls() {
+void getControls() { // reads buttons and joystick values and maps them
   for (int i = 0; i < 4; i++) {
     buttons[i].update();
     if (buttons[i].rose()) {
@@ -51,15 +51,4 @@ void getControls() {
   else if (thisJoyY > 561) {
     joystickBuffer[1] = -1;
   }
-//  Serial.print(buttonBuffer[0]);
-//  Serial.print(", ");
-//  Serial.print(buttonBuffer[1]);
-//  Serial.print(", ");
-//  Serial.print(buttonBuffer[2]);
-//  Serial.print(", ");
-//  Serial.print(buttonBuffer[3]);
-//  Serial.print(", ");
-//  Serial.print(joystickBuffer[1]);
-//  Serial.print(", ");
-//  Serial.println(joystickBuffer[0]);
 }

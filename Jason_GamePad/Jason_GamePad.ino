@@ -11,6 +11,8 @@ int curMode = -1;
 #include "interaction.h"
 #include "hero.h"
 #include "enemy.h"
+#include "fight.h"
+#include "status.h"
 #include "modes.h"
 
 
@@ -22,7 +24,7 @@ void setup() {
   initHero();
   initMode();
   initNeighbors();
-
+  curMode = -1;
 }
 
 void loop() {

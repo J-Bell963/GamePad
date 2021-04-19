@@ -1,13 +1,13 @@
 
 
-/* 0x01 - obstical 
- * 0x02 - atrium
- * 0x03 - left lab
- * 0x04 - experiment room
- * 0x05 - rundown hallway
- * 0x06 - front
- * 0x07 - dr.z's lab
- */
+/* 0x01 - obstical
+   0x02 - atrium
+   0x03 - left lab
+   0x04 - experiment room
+   0x05 - rundown hallway
+   0x06 - front
+   0x07 - dr.z's lab
+*/
 
 int interaction[numLevels][tileW * tileH] {
   // Level 0 - Front
@@ -135,7 +135,7 @@ void initNeighbors() {
 
 boolean canMove;
 
-boolean checkMove(int level, int curX, int curY, int curW, int curH) {
+boolean checkMove(int level, int curX, int curY, int curW, int curH) { // checks if the next move is to a playable tile
   int curTileX = curX / tileSize;
   int curTileY = curY / tileSize;
   int curTile = curTileX + (curTileY * tileW);
@@ -165,17 +165,6 @@ boolean checkMove(int level, int curX, int curY, int curW, int curH) {
     if (isOut == true && xMin == true && xMax == true && yMin == true && yMax == true) {
       canMove = false;
     }
-//    Serial.print("LVL: "); Serial.print(level); 
-//    Serial.print("\t X: "); Serial.print(curX); Serial.print("\t Y: "); Serial.print(curY); 
-//    Serial.print("\t W: ");  Serial.print(curW); Serial.print("\t H: "); Serial.print(curH); 
-//    Serial.print("\t CT: "); Serial.print(curTile); Serial.print("\t NT: "); Serial.print(whichTile); 
-//    Serial.print("\t NX: "); Serial.print(neighborX); Serial.print("\t NY: "); Serial.print(neighborY); 
-//    Serial.print("\t OUT "); Serial.print(isOut);
-//    Serial.print("\t xMin: "); Serial.print(xMin); Serial.print("\t xMax: "); Serial.print(xMax); 
-//    Serial.print("\t yMin: "); Serial.print(yMin); Serial.print("\t yMax: "); Serial.print(yMax); 
-//    Serial.print("\t ? "); Serial.print(canMove);
-//    Serial.println();
   }
-  return canMove; 
-
+  return canMove;
 }

@@ -77,7 +77,7 @@ void drawHero() { // draws my hero
     }
   }
 
-  tft.setClipRect(heroX - 1, heroY - 1, 33, 33);
+  tft.setClipRect(heroX - 1, heroY + 1, 33, 33);
   tft.drawRGBBitmap(heroX, heroY, whit_PIX[heroFrame], whit_MASK[heroFrame], heroW, heroH);
   tft.updateScreen( );
 

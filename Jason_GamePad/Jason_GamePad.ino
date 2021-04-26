@@ -2,8 +2,7 @@
 //Jason Bell || 03/29/21
 //CRT 360 Advanced Prototyping || GamePad
 
-int curMode = -1;
-
+int curMode = -2;
 #include "screen.h"
 #include "frames.h"
 #include "tile.h"
@@ -11,6 +10,7 @@ int curMode = -1;
 #include "interaction.h"
 #include "hero.h"
 #include "enemy.h"
+#include "DRZ.h"
 #include "fight.h"
 #include "status.h"
 #include "modes.h"
@@ -24,7 +24,7 @@ void setup() {
   initHero();
   initMode();
   initNeighbors();
-  curMode = -1;
+  
 }
 
 void loop() {

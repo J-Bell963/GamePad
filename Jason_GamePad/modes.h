@@ -3,45 +3,36 @@
 #include "Graphic_PIX.h"
 #include "Graphic_MASK.h"
 
-boolean initDeadScreen;
+boolean initDead;
 boolean initIntro;
+boolean initIntro2;
 boolean initLvl1;
 boolean initLvl2;
 boolean initLvl3;
 boolean initLvl4;
 boolean initLvl5;
 boolean initLvl6;
+boolean initWin;
 
 void initMode() {
-  initDeadScreen = false;
+  curMode = -2;
+  initDead = false;
   initIntro = false;
+  initIntro2 = false;
   initLvl1 = false;
   initLvl2 = false;
   initLvl3 = false;
   initLvl4 = false;
   initLvl5 = false;
   initLvl6 = false;
-
+  initWin = false;
 }
-void deadScreen() {
-  if (initDeadScreen == false) {
-    tft.setClipRect(0, 0, screenW, screenH);
-    tft.setCursor(90, 100);
-    tft.setTextColor(ILI9341_RED);
-    tft.setTextSize(3);
-    tft.print("YOU DIED");
-  }
-  heroHealth = 3;
 
-  if (buttonBuffer[2] == 1) {
-    curMode = -1;
-
-  }
-}
 
 void introScreen() { // my intro screen
   if (initIntro == false) {
     tft.setClipRect(0, 0, screenW, screenH);
+    tft.fillScreen(ILI9341_BLACK);
     tft.drawRGBBitmap(0, 0, Graphic_PIX[0], 320, 206);
     tft.setCursor(40, 40);
     tft.setTextColor(ILI9341_WHITE);
@@ -61,30 +52,100 @@ void introScreen() { // my intro screen
     tft.print("Z");
     tft.updateScreen();
     initIntro = true;
+    heroHealth = 3;
+    delay(1000);
   }
-  if (buttonBuffer[0] == 1) {
-    curMode = 0;
 
+  if (buttons[0].fell()) {
+    curMode = -1;
+    initIntro = false;
   }
 }
 
+void introScreen2() {
+  if (initIntro2 == false) {
+    tft.setClipRect(0, 0, screenW, screenH);
+    drawLevel(0);
+    tft.setCursor(125, 90);
+    tft.setTextColor(ILI9341_YELLOW);
+    tft.setTextSize(5);
+    tft.print(".");
+    tft.setCursor(50, 100);
+    tft.setTextSize(2);
+    tft.print("Left");
+    tft.setCursor(40, 120);
+    tft.setTextSize(2);
+    tft.print("Attack");
+    tft.setCursor(165, 90);
+    tft.setTextColor(ILI9341_RED);
+    tft.setTextSize(5);
+    tft.print(".");
+    tft.setCursor(215, 100);
+    tft.setTextSize(2);
+    tft.print("Right");
+    tft.setCursor(210, 120);
+    tft.setTextSize(2);
+    tft.print("Attack");
+    tft.setCursor(145, 70);
+    tft.setTextColor(ILI9341_BLUE);
+    tft.setTextSize(5);
+    tft.print(".");
+    tft.setCursor(40, 40);
+    tft.setTextSize(2);
+    tft.print("Interact/Change level");
+    tft.setCursor(145, 110);
+    tft.setTextColor(ILI9341_GREEN);
+    tft.setTextSize(5);
+    tft.print(".");
+    tft.setCursor(95, 180);
+    tft.setTextSize(2);
+    tft.print("Start game");
+    tft.updateScreen();
+    initIntro2 = true;
+  }
+  if (buttons[2].fell()) {
+    tft.setClipRect(0, 0, screenW, screenH);
+    drawLevel(0);
+    tft.updateScreen();
+    curMode = 0;
+    initIntro2 = false;
+  }
+}
+
+void deadScreen() {
+  if (initDead == false) {
+    tft.setClipRect(0, 0, screenW, screenH);
+    tft.fillScreen(ILI9341_BLACK);
+    tft.setCursor(90, 100);
+    tft.setTextColor(ILI9341_RED);
+    tft.setTextSize(3);
+    tft.print("YOU DIED");
+    tft.updateScreen();
+    initDead = true;
+  }
+  if (buttonBuffer[2] == 1) {
+    curMode = -2;
+    initDead = false;
+  }
+}
 
 void firstLevel() {// draws my courtyard level
 
   if (initLvl1 == false) {
     tft.setClipRect(0, 0, screenW, screenH);
     drawLevel(0);
-    enemyX = 100;
-    enemyY = 100;
+    heroX = 150;
+    heroY = 75;
     enemyHealth = 2;
     enemyStatus = true;
     tft.updateScreen();
+
     initLvl1 = true;
   }
   drawLevel(0);
-  fight();
-  drawEnemy();
+  updateHealth();
   drawHero();
+
 
   if (interaction[curMode][curTile] == 0x02 && buttons[0].rose()) {
     curMode = 1;
@@ -99,9 +160,12 @@ void secondLevel() { // draws my atruim level
     tft.setClipRect(0, 0, screenW, screenH);
     drawLevel(1);
     tft.updateScreen();
+
     initLvl2 = true;
   }
   drawLevel(1);
+  updateHealth();
+  fight();
   drawHero();
 
   if (interaction[curMode][curTile] == 0x03 && buttons[0].rose()) {
@@ -139,10 +203,12 @@ void thirdLevel() { // draws my left lab level
     enemyHealth = 2;
     enemyStatus = true;
     tft.updateScreen();
+
     initLvl3 = true;
   }
 
   drawLevel(2);
+  updateHealth();
   fight();
   drawEnemy();
   drawHero();
@@ -159,12 +225,20 @@ void fourthLevel() { // draws my experiment room level
   if (initLvl4 == false) {
     tft.setClipRect(0, 0, screenW, screenH);
     drawLevel(3);
+    enemyX = 150;
+    enemyY = 150;
+    enemyHealth = 2;
     tft.updateScreen();
+
     initLvl4 = true;
   }
 
   drawLevel(3);
+  updateHealth();
+  fight();
+  drawEnemy();
   drawHero();
+
   if (interaction[curMode][curTile] == 0x02 && buttons[0].rose()) {
     curMode = 1;
     initLvl4 = false;
@@ -182,11 +256,13 @@ void fifthLevel() { // draws my rundown hallway level
     enemyHealth = 2;
     enemyStatus = true;
     tft.updateScreen();
+
     initLvl5 = true;
   }
 
   drawLevel(4);
   fight();
+  updateHealth();
   drawEnemy();
   drawHero();
 
@@ -208,10 +284,14 @@ void sixthLevel() { // draws my DR.Z's lab level
   if (initLvl6 == false) {
     tft.setClipRect(0, 0, screenW, screenH);
     drawLevel(5);
+    DRX = 200;
+    DRY = 50;
     tft.updateScreen();
     initLvl6 = true;
   }
   drawLevel(5);
+  updateHealth();
+  drawDR();
   drawHero();
 
   if (interaction[curMode][curTile] == 0x05 && buttons[0].rose()) {
@@ -220,17 +300,40 @@ void sixthLevel() { // draws my DR.Z's lab level
     heroX = 280;
     heroY = 110;
   }
+  if (interaction[curMode][curTile] == 0x08 && buttons[0].rose()) {
+    curMode = 6;
+    initLvl6 = false;
+  }
+}
+
+void winScreen() {
+  if (initWin == false) {
+    tft.setClipRect(0, 0, screenW, screenH);
+    tft.fillScreen(ILI9341_BLACK);
+    tft.setCursor(30, 100);
+    tft.setTextColor(ILI9341_PINK);
+    tft.setTextSize(3);
+    tft.print("YOU FOUND DR.Z");
+    tft.updateScreen();
+    initWin = true;
+  }
+  if (buttonBuffer[2] == 1) {
+    curMode = -2;
+    initWin = false;
+  }
 }
 
 void runMode() { // finite state machine that controls my levels
   switch (curMode) { // switch case of my levels
-    case -2: deadScreen(); break;
-    case -1: introScreen(); break;
+    case -3: deadScreen(); break;
+    case -2: introScreen(); break;
+    case -1: introScreen2(); break;
     case 0: firstLevel(); break;
     case 1: secondLevel(); break;
     case 2: thirdLevel(); break;
     case 3: fourthLevel(); break;
     case 4: fifthLevel(); break;
     case 5: sixthLevel(); break;
+    case 6: winScreen(); break;
   }
 }
